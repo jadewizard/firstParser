@@ -34,6 +34,27 @@ foreach ($doc->find('div#catalog-main-menu > table > tr > td') as $a)
     //Объеденяем два массива в массив массивов.
 }
 
-print_r($fullArray);
+//print_r($fullArray);
+
+//print_r($_POST);
 
 ?>
+</html>
+
+<style>
+	.box1{ width: 300px; height: 200px; }
+	.box2{ width: 300px; height: 180px; }
+</style>
+
+<title>Parser</title>
+<form method="post">
+	<fieldset class="box1">
+		<legend>Выбор категорий для парсинга</legend>
+		<select multiple="" name="input[]" class="box2">
+			<?php foreach ($fullArray as $row){ ?>
+			<option value="<?php echo $row['url']; ?>"><?php echo $row['title']; ?></option>
+			<?php } ?>
+		</select>
+	</fieldset>
+	</form>
+	</html>
