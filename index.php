@@ -2,7 +2,8 @@
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-// подключаем библиотеку phpQuery
+
+
 require_once('phpQuery/phpQuery.php');
 	
 $i = 0;
@@ -21,9 +22,18 @@ foreach ($doc->find('div#catalog-main-menu > table > tr > td') as $a)
     $elements['url'] = pq($a)->find('a')->attr('href');
     $elements['title'] = pq($a)->find('a')->text();
 
-    $data[$i] = $elements['title'];
-    //Записываем в массив данные полученые с сайта
+    $data['title'][$i] = $elements['title'];
+    //Массив с заголовками
+
+    $data['url'][$i] = $elements['url'];
+    //Массив с ссылками
+
+    $fullArray[$i] = array(
+    	'title' => $data['title'][$i],
+    	'url' => $data['url'][$i] = $elements['url']);
+    //Объеденяем два массива в массив массивов.
 }
 
-print_r($data);
+print_r($fullArray);
+
 ?>
