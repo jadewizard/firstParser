@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 // подключаем библиотеку phpQuery
 require_once('phpQuery/phpQuery.php');
 	
-$arr = array();
+$i = 0;
 
 $url = 'http://fran-mebel.ru/';
 
@@ -16,13 +16,14 @@ $doc = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
 foreach ($doc->find('div#catalog-main-menu > table > tr > td') as $a)
 {
+	$i++;
+
     $elements['url'] = pq($a)->find('a')->attr('href');
     $elements['title'] = pq($a)->find('a')->text();
 
-    preg_match_all('/[А-Я][^А-Я]*?/Usu',$elements['title'],$data['title']);
-    //Регуляркой разбиваем категории на массивы по заглавным буквам
-    //Присваиваем категории массиву data[title]
-
-    print_r($data['title']);
+    $data[$i] = $elements['title'];
+    //Записываем в массив данные полученые с сайта
 }
+
+print_r($data);
 ?>
