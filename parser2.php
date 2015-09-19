@@ -3,12 +3,10 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-
-require_once('phpQuery/phpQuery.php');
 	
 $i = 0;
 
-$url = 'http://fran-mebel.ru/catalog-553u.html';
+$url = 'http://fran-mebel.ru/catalog-553k.html';
 
 $html = file_get_contents($url);
 $doc = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
