@@ -8,15 +8,21 @@ class parserManager
     public $pqManager;
 
     public function __construct($url) {
+    	global $currentStep;
+
     	$this->url = $url;
     	//Записываем url.
 
         $html = file_get_contents($url);
         $this->pqManager['allCat'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
+
+        $currentStep = 1;
     }
 
     public function getGeneralCat()
     {
+    	global $currentStep;
+
         $i = 0;
 
         foreach ($this->pqManager['allCat']->find('div#catalog-main-menu > table > tr > td') as $a)
@@ -40,20 +46,19 @@ class parserManager
                 'url' => $data['url'][$i] = $elements['url']);
                  //Объеденяем два массива в массив массивов.
         }
+        $currentStep = 1;
         return ($fullArray);
         //Возвращаем массив категорий
     }
 
     public function getSubCat($preCat)
     {
+    	global $currentStep;
+
     	$i = 0;
 
         $html = file_get_contents($this->url.$preCat);
         $this->pqManager['subCat'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
-
-        foreach ($this->pqManager['subCat']->find('div#prod') as $a)
-        {
-        	$i++;
 
         	$htmlData = $this->pqManager['subCat']->find('div#prod > span')->html();
 
@@ -62,26 +67,68 @@ class parserManager
             //есть ещё подкатегории
         	if (empty($htmlData))
         	{
-                 $elements['title'] = pq($a)->find('a')->text();
-                 $elements['url'] = pq($a)->find('a')->attr('href');
+                foreach ($this->pqManager['subCat']->find('div#prod') as $a)
+                {
+        	        $i++;  
 
-                 $data['title'][$i] = $elements['title'];
-                 //Массив с заголовками
+                    $elements['title'] = pq($a)->find('a')->text();
+                    $elements['url'] = pq($a)->find('a')->attr('href');
 
-                 $data['url'][$i] = $elements['url'];
-                 //Массив с ссылками
+                    $data['title'][$i] = $elements['title'];
+                    //Массив с заголовками
 
-                 $fullArray[$i] = array(
-                     'title' => $data['title'][$i],
-                     'url' => $data['url'][$i] = $elements['url']);
-                      //Объеденяем два массива в массив массивов.
+                    $data['url'][$i] = $elements['url'];
+                    //Массив с ссылками
+
+                    $fullArray[$i] = array(
+                        'title' => $data['title'][$i],
+                        'url' => $data['url'][$i] = $elements['url']);
+                         //Объеденяем два массива в массив массивов.
+                }
+                $currentStep = 2;
+                return $fullArray;
+                //Возвращем массив с категориями
+
+            }
+       	    else
+        	{
+                $this->getShopElements($_POST);
+                //Вызываем функцию которая получит товары из определённой категории
+        		$currentStep = 3;
         	}
-        }
-        return $fullArray;
     }
 
-    public function catCheck($value='')
+    public function getShopElements($post)
     {
-    	//$html = file_get_contents();
+    	$i = 0;
+    	$url = 'http://fran-mebel.ru/catalog-63.html';
+        $html = file_get_contents($url);
+        $this->pqManager['shop'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
+
+        foreach ($this->pqManager['shop']->find('div.sorting-item') as $a)
+        {
+	        $i++;
+
+            $elements['url'] = pq($a)->find('a')->attr('href');
+            $elements['title'] = pq($a)->attr('data-name');
+            $elements['price'] = pq($a)->attr('data-price');
+
+            $data['title'][$i] = $elements['title'];
+            //Массив с заголовками
+
+            $data['url'][$i] = $elements['url'];
+            //Массив с ссылками
+
+            $data['price'][$i] = $elements['price'];
+            //Массив в ценами
+
+            $fullArray[$i] = array(
+    	        'title' => $data['title'][$i],
+    	        'url' => $data['url'][$i],
+    	        'price' => $data['price'][$i]);
+            //Объеденяем два массива в массив массивов.
+        }
+
+        return $fullArray;
     }
 }
