@@ -9,6 +9,8 @@ print_r($_POST);
 
 $pm = new parserManager('http://fran-mebel.ru/');
 
+$pm->getGeneralCat();
+
 if (isset($_GET['step']))
 {
     $currentStep = $_GET['step'];
@@ -39,6 +41,22 @@ if (isset($_POST['genSubCatSend']))
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+function firstStepValid (form)
+{
+    var input = form.inputGenCat.value;
+
+    if(!input)
+    {
+        alert('Выберете категорию!');
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+</script>
 <style>
 .fullbg{background-image: url(fullbg.png); width: 100%; height: 100%}
 </style>
@@ -52,7 +70,7 @@ if (isset($_POST['genSubCatSend']))
         <div class="panel panel-default">
             <div class="panel-heading">Выбор основной категории</div>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="index.php?step=2">
+                <form class="form-horizontal" method="post" onsubmit="firstStepValid(this)">
                     <div class="form-group">
                         <div class="col-lg-12">
                             <select multiple=""size="12" name="inputGenCat" class="form-control">

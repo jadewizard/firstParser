@@ -32,6 +32,9 @@ class parserManager
             $data['url'][$i] = $elements['url'];
             //Массив с ссылками
 
+            //$subCat = $this->getSubCat($data['url'][$i]);
+            //print_r($subCat);
+
             $fullArray[$i] = array(
                 'title' => $data['title'][$i],
                 'url' => $data['url'][$i] = $elements['url']);
@@ -52,19 +55,27 @@ class parserManager
         {
         	$i++;
 
-            $elements['title'] = pq($a)->find('a')->text();
-            $elements['url'] = pq($a)->find('a')->attr('href');
+        	$htmlData = $this->pqManager['subCat']->find('div#prod > span')->html();
 
-            $data['title'][$i] = $elements['title'];
-            //Массив с заголовками
+            //Если переменная htmlData пустая,
+            //то это означает, что в основной категории
+            //есть ещё подкатегории
+        	if (empty($htmlData))
+        	{
+                 $elements['title'] = pq($a)->find('a')->text();
+                 $elements['url'] = pq($a)->find('a')->attr('href');
 
-            $data['url'][$i] = $elements['url'];
-            //Массив с ссылками
+                 $data['title'][$i] = $elements['title'];
+                 //Массив с заголовками
 
-            $fullArray[$i] = array(
-                'title' => $data['title'][$i],
-                'url' => $data['url'][$i] = $elements['url']);
-                 //Объеденяем два массива в массив массивов.
+                 $data['url'][$i] = $elements['url'];
+                 //Массив с ссылками
+
+                 $fullArray[$i] = array(
+                     'title' => $data['title'][$i],
+                     'url' => $data['url'][$i] = $elements['url']);
+                      //Объеденяем два массива в массив массивов.
+        	}
         }
         return $fullArray;
     }
