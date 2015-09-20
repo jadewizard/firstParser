@@ -53,7 +53,7 @@ print_r($fullArray);
 <form method="post">
 	<fieldset class="box1">
 		<legend>Выбор категорий для парсинга</legend>
-		<select multiple="" name="input[]" class="box2">
+		<select multiple="" name="input" class="box2">
 			<?php foreach ($fullArray as $row){ ?>
 			<option value="<?php echo $row['url']; ?>"><?php echo $row['title']; ?></option>
 			<?php } ?>
