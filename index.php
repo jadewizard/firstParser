@@ -13,6 +13,10 @@ if (isset($_GET['step']))
 {
     $currentStep = $_GET['step'];
 }
+else
+{
+    $currentStep = 1;
+}
 
 if (isset($_POST['genCatSend']))
 {
