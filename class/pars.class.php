@@ -53,7 +53,7 @@ class parserManager
 
     public function getSubCat($preCat)
     {
-    	global $currentStep;
+    	global $currentStep,$priceArray;
 
     	$i = 0;
 
@@ -92,16 +92,19 @@ class parserManager
             }
        	    else
         	{
-                $this->getShopElements($_POST);
+                $priceArray = $this->getShopElements($_POST['inputGenCat']);
                 //Вызываем функцию которая получит товары из определённой категории
-        		$currentStep = 3;
+        		//$currentStep = 3;
         	}
     }
 
-    public function getShopElements($post)
+    public function getShopElements($preCat)
     {
+    	global $currentStep;
+
     	$i = 0;
-    	$url = 'http://fran-mebel.ru/catalog-63.html';
+    	$url = $this->url.$preCat;
+    	print_r($url);
         $html = file_get_contents($url);
         $this->pqManager['shop'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
@@ -128,7 +131,7 @@ class parserManager
     	        'price' => $data['price'][$i]);
             //Объеденяем два массива в массив массивов.
         }
-
+        $currentStep = 3;
         return $fullArray;
     }
 }
