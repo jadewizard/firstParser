@@ -113,6 +113,7 @@ class parserManager
 	        $i++;
 
             $elements['url'] = pq($a)->find('a')->attr('href');
+            $elements['img'] = pq($a)->find('img')->attr('src');
             $elements['title'] = pq($a)->attr('data-name');
             $elements['price'] = pq($a)->attr('data-price');
 
@@ -125,13 +126,18 @@ class parserManager
             $data['price'][$i] = $elements['price'];
             //Массив в ценами
 
+            $data['img'][$i] = $elements['img'];
+            //Массив в фото
+
             $fullArray[$i] = array(
     	        'title' => $data['title'][$i],
     	        'url' => $data['url'][$i],
+    	        'img' => $this->url.$data['img'][$i],
     	        'price' => $data['price'][$i]);
             //Объеденяем два массива в массив массивов.
         }
         $currentStep = 3;
+        //print_r($fullArray);
         return $fullArray;
     }
 }

@@ -9,7 +9,6 @@
 function firstStepValid (form)
 {
     var input = form.inputGenCat.value;
-
     if(!input)
     {
         alert('Выберете категорию!');
@@ -29,7 +28,6 @@ function firstStepValid (form)
 <br>
 <div class="row">
     <div class="col-md-12">
-
         <?php if ($currentStep == 1) { ?>
         <div class="panel panel-default">
             <div class="panel-heading">Выбор основной категории</div>
@@ -49,7 +47,6 @@ function firstStepValid (form)
             </div>
         </div>
         <?php } ?>
-
         <?php if ($currentStep == 2) { ?>
         <div class="panel panel-default">
             <div class="panel-heading">Выбор подкатегории</div>
@@ -70,27 +67,32 @@ function firstStepValid (form)
             </div>
         </div>
         <?php } ?>
-
         <?php if ($currentStep == 3) { ?>
-        <div class="panel panel-default">
-            <div class="panel-heading">Выберете товар который хотите опубликовать на сайте</div>
-            <div class="panel-body">
-                <form class="form-horizontal" method="post" action="index.php?step=3">
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <select multiple="" size="12" name="inputSubGenCat" class="form-control">
-                                <?php foreach ($priceArray as $row){ ?>
-                                <option value="<?php echo $row['url']; ?>"><?php echo $row['title']; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                    <input type="submit" value="Далее" name="btnStep3" class="btn btn-default btn-block glyphicon glyphicon-search">
-                    <a href="index.php?step=1" class="btn btn-danger btn-block">Назад</a>
-                </form>
-            </div>
-        </div>
+        <table class="table table-striped table-hover ">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Публиковать?</th>
+                    <th>Фотография</th>
+                    <th>Заголовок</th>
+                    <th>Цена</th>
+                </tr>
+            </thead>
+            <tbody>
+            <form method="POST">
+            <input type="submit" name="okBtn" value="Опубликовать">
+            <?php $i=0; foreach ($priceArray as $row){ ?>
+                <tr class="success">
+                    <td><?php $i++; echo $i; ?></td>
+                    <td><input type="checkbox" value="<?php echo $i; ?>" name="priceCheck[]"></td>
+                    <td><img width="50" height="50" src="<?php echo $row['img']; ?>"></td>
+                    <td><?php echo $row['title']; ?></td>
+                    <td><?php echo $row['price']; ?></td>
+                </tr>
+            <?php } ?>
+            </form>
+            </tbody>
+        </table>
         <?php } ?>
-
     </div>
 </div>
