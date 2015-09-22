@@ -16,7 +16,7 @@ class parserManager
         $html = file_get_contents($url);
         $this->pqManager['allCat'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-        $currentStep = 1;
+        //$currentStep = 1;
     }
 
     public function getGeneralCat()
@@ -55,21 +55,21 @@ class parserManager
     {
     	global $currentStep,$priceArray;
 
-    	$i = 0;
+    	for ($z = 0; $z < count($preCat); $z++)
+    	{
+    		$i = 0;
 
-        $html = file_get_contents($this->url.$preCat);
-        $this->pqManager['subCat'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
+    	    $html = file_get_contents($this->url.$preCat[$z]);
+    	    //Получаем код страницы.
+            $this->pqManager['subCat'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-        	$htmlData = $this->pqManager['subCat']->find('div#prod > span')->html();
+    	    $htmlData = $this->pqManager['subCat']->find('div#prod > span')->html();
 
-            //Если переменная htmlData пустая,
-            //то это означает, что в основной категории
-            //есть ещё подкатегории
-        	if (empty($htmlData))
-        	{
+    	    if (empty($htmlData))
+    	    {
                 foreach ($this->pqManager['subCat']->find('div#prod') as $a)
                 {
-        	        $i++;  
+        	        $i++;
 
                     $elements['title'] = pq($a)->find('a')->text();
                     $elements['url'] = pq($a)->find('a')->attr('href');
@@ -80,22 +80,21 @@ class parserManager
                     $data['url'][$i] = $elements['url'];
                     //Массив с ссылками
 
-                    $fullArray[$i] = array(
+                    $fullArray[$z][$i] = array(
                         'title' => $data['title'][$i],
                         'url' => $data['url'][$i] = $elements['url']);
                          //Объеденяем два массива в массив массивов.
                 }
-                $currentStep = 2;
-                return $fullArray;
-                //Возвращем массив с категориями
-
-            }
-       	    else
-        	{
-                $priceArray = $this->getShopElements($_POST['inputGenCat']);
-                //Вызываем функцию которая получит товары из определённой категории
-        		//$currentStep = 3;
-        	}
+    	    }
+    	    else
+    	    {
+                $fullArray[$z][$i] = array(
+                    'title' => null,
+                    'url' => $preCat[$z]);
+                     //Объеденяем два массива в массив массивов.
+    	    }
+    	}
+    	$this->getShopElements($fullArray);
     }
 
     public function getShopElements($preCat)
@@ -103,41 +102,59 @@ class parserManager
     	global $currentStep;
 
     	$i = 0;
-    	$url = $this->url.$preCat;
-    	print_r($url);
-        $html = file_get_contents($url);
-        $this->pqManager['shop'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-        foreach ($this->pqManager['shop']->find('div.sorting-item') as $a)
-        {
-	        $i++;
+    	for ($z = 0; $z < count($preCat); $z++)
+    	{
+    		for ($x = 0; $x<count($preCat[$z]);$x++)
+    		{
+                $url = $this->url.$preCat[$z][$x]['url'];
+                $html = file_get_contents($url);
+                $this->pqManager['shop'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-            $elements['url'] = pq($a)->find('a')->attr('href');
-            $elements['img'] = pq($a)->find('img')->attr('src');
-            $elements['title'] = pq($a)->attr('data-name');
-            $elements['price'] = pq($a)->attr('data-price');
+                foreach ($this->pqManager['shop']->find('div.sorting-item') as $a)
+                {
+	                $i++;
 
-            $data['title'][$i] = $elements['title'];
-            //Массив с заголовками
+                    $elements['url'] = pq($a)->find('a')->attr('href');
+                    $elements['img'] = pq($a)->find('img')->attr('src');
+                    $elements['title'] = pq($a)->attr('data-name');
+                    $elements['price'] = pq($a)->attr('data-price');
 
-            $data['url'][$i] = $elements['url'];
-            //Массив с ссылками
+                    $data['title'][$i] = $elements['title'];
+                    //Массив с заголовками
 
-            $data['price'][$i] = $elements['price'];
-            //Массив в ценами
+                    $data['url'][$i] = $elements['url'];
+                    //Массив с ссылками
 
-            $data['img'][$i] = $elements['img'];
-            //Массив в фото
+                    $data['price'][$i] = $elements['price'];
+                    //Массив в ценами
 
-            $fullArray[$i] = array(
-    	        'title' => $data['title'][$i],
-    	        'url' => $data['url'][$i],
-    	        'img' => $this->url.$data['img'][$i],
-    	        'price' => $data['price'][$i]);
-            //Объеденяем два массива в массив массивов.
+                    $data['img'][$i] = $elements['img'];
+                    //Массив в фото
+
+                    $fullArray[$i] = array(
+    	                'title' => $data['title'][$i],
+    	                'url' => $data['url'][$i],
+    	                'img' => $this->url.$data['img'][$i],
+    	                'price' => $data['price'][$i]);
+                    //Объеденяем два массива в массив массивов.
+                }
+    		}
+            //$currentStep = 3;
+            //print_r($fullArray);
+            $this->dbWrite($fullArray);
         }
-        $currentStep = 3;
-        //print_r($fullArray);
-        return $fullArray;
+    }
+
+    public function dbWrite($data)
+    {
+        global $db;
+
+        print_r($data[1]['title']);
+
+        foreach ($data as $row)
+        {
+            $db->query("INSERT INTO pre_content (img,title,price) VALUES ('$row[img]','$row[title]','$row[price]')");
+        }
     }
 }
