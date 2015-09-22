@@ -18,4 +18,16 @@ if (isset($_POST['okBtn']))
     print_r($_POST['priceCheck']);
 }
 
+if (isset($_GET['act']) && $_GET['act'] == 'refresh')
+{
+    $allCatArray = $pm -> getGeneralCat();
+}
+
+if (isset($_POST['inputCat']) && !empty($_POST['inputCat']))
+{
+    $catArray = $_POST['inputCat'];
+
+    $pm->getSubCat($catArray);
+}
+
 ?>
