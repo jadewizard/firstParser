@@ -110,8 +110,20 @@ class parserManager
                 $url = $this->url.$preCat[$z][$x]['url'];
                 $html = file_get_contents($url);
                 $this->pqManager['shop'] = phpQuery::newDocumentHTML($html, $charset = 'utf-8');
+                 
+                //Определяем ссылку на элемент для парсинга
+                if (!empty($this->pqManager['shop']->find('table#elements > tr#have')))
+                {
+                    $parsStr = 'table.item-table';
+                    //В первом случае мы обращаемся к таблице с классом item-table
+                }
+                else
+                {
+                    $parsStr = 'div.sorting-item';
+                    //Во втором случае обращаемся к блоку с классом sorting-item
+                }
 
-                foreach ($this->pqManager['shop']->find('div.sorting-item') as $a)
+                foreach ($this->pqManager['shop']->find($parsStr) as $a)
                 {
 	                $i++;
 
@@ -139,6 +151,7 @@ class parserManager
     	                'price' => $data['price'][$i]);
                     //Объеденяем два массива в массив массивов.
                 }
+
     		}
             //$currentStep = 3;
             //print_r($fullArray);
@@ -156,5 +169,6 @@ class parserManager
         {
             $db->query("INSERT INTO pre_content (img,title,price) VALUES ('$row[img]','$row[title]','$row[price]')");
         }
+        header("Location: index.php?page=parsing");
     }
 }
