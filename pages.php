@@ -15,16 +15,16 @@ if (isset($_GET['page']))
             $currentPage = 'pages/main.php';
             break;
     }
+
+    if (isset($_GET['act']) && $_GET['act'] == 'refresh')
+    {
+        $currentPage = 'pages/allcat.php';
+        //Показыаем страницу с выбором категорий для парсинга
+    }
 }
 else
 {
     $currentPage = 'pages/main.php';
-}
-
-if ($currentStep == 1)
-{
-    $currentPage = 'pages/allcat.php';
-    //Показыаем страницу с выбором категорий для парсинга
 }
 
 include 'pages/index.php';
