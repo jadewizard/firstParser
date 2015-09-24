@@ -24,6 +24,4 @@ require_once 'handler.php';
 //Обработчик форм
 
 include 'pages.php'; //TMP
-
-print_r($_POST)
 ?>
