@@ -123,7 +123,7 @@ class parserManager
                     //Во втором случае обращаемся к блоку с классом sorting-item
                 }
 
-                foreach ($this->pqManager['shop']->find($parsStr) as $a)
+                foreach ($this->pqManager['shop']->find('div.sorting-item') as $a)
                 {
 	                $i++;
 
@@ -131,6 +131,12 @@ class parserManager
                     $elements['img'] = pq($a)->find('img')->attr('src');
                     $elements['title'] = pq($a)->attr('data-name');
                     $elements['price'] = pq($a)->attr('data-price');
+
+                    //Обрабатываем случай если цена = over999999
+                    if($elements['price'] == '9999999')
+                    {
+                        $elements['price'] = 'Не определенна';
+                    }
 
                     $data['title'][$i] = $elements['title'];
                     //Массив с заголовками
