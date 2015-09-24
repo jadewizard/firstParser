@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-<form method="post" action="index.php?page=parsing">
+<form method="post" action="index.php?page=parsing&act=del">
   <?php $i = 0; foreach ($allCatArray as $row) { $i++;?>
     <tr>
       <td><?php echo $i; ?></td>
