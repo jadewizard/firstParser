@@ -30,4 +30,9 @@ if (isset($_POST['inputCat']) && !empty($_POST['inputCat']))
     $pm->getSubCat($catArray);
 }
 
+if (isset($_GET['act']) && $_GET['act'] == 'del')
+{
+    $content->delete($_POST['selectRow']);
+}
+
 ?>
